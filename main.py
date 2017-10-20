@@ -15,7 +15,7 @@ def load(filename):
 def p(sth):
    print(sth, file=sys.stdout) 
 
-taxonomyList = load('mnist/PocData/taxonomyList_r.pkl')
+taxonomyList = load('mnist/data/taxonomyList_r.pkl')
 
 tokenizer = RegexpTokenizer(r'\w+')
 _vocab_processor = learn.preprocessing.VocabularyProcessor.restore('mnist/data/vocabulary.vocab')
@@ -40,7 +40,7 @@ with graph.as_default():
         dropout_keep_prob = graph.get_operation_by_name("dropout").outputs[0]
         logits = graph.get_operation_by_name("logits").outputs[0]
 
-def classification(request, logits):
+def taxonomy(request, logits):
     text = request['text']
     text = " ".join(tokenizer.tokenize(text.lower()))
     p(text)
@@ -59,11 +59,14 @@ def classification(request, logits):
 # webapp
 app = Flask(__name__)
 
-@app.route('/api/classification', methods=['POST'])
-def classificationHandle():
-    result = classification(request.json, logits)
+@app.route('/api/taxonomy', methods=['POST'])
+def taxonomyHandle():
+    result = taxonomy(request.json, logits)
     return jsonify(result=result)
 
+@app.route('/api/all_taxonomy', methods=['GET'])
+def taxonomysHandle():
+    return jsonify(result=taxonomyList)
 
 @app.route('/')
 def main():
