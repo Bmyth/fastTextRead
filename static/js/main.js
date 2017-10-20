@@ -1,5 +1,5 @@
 $(function() {
-    
+
     $('.btn').click(function(){
         var text = $('.text').val();
         $.ajax({
@@ -9,7 +9,7 @@ $(function() {
             data: JSON.stringify({text:text}),
             success: function(res){
                 result = res.result;
-                $('.result').text(result);
+                $('.result').text(result.prediction);
             }
         });
     })

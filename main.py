@@ -5,6 +5,7 @@ from nltk.tokenize import RegexpTokenizer
 from tensorflow.contrib import learn
 import sys
 import pickle
+import pandas as pd
 
 def load(filename):
     file = open(filename, 'rb')
@@ -50,11 +51,18 @@ def taxonomy(request, logits):
       dropout_keep_prob: 1.0
     }
     logits = sess.run([logits], feed_dict)
-    logits = np.array(logits) + 1
-    p(logits)
     prediction = np.argmax(logits)
-    p(prediction)
-    return taxonomyList[prediction]['text']
+
+    result = {}
+    result['prediction'] = taxonomyList[prediction]['text']
+    weights = logits[0][0]
+    fullResult = []
+    for i in range(len(weights)):
+        r = {'weight':str(weights[i]), 'taxonomy':taxonomyList[i]['text']}
+        fullResult.append(r)
+    result['fullResult'] = fullResult
+    p(result)
+    return result
 
 # webapp
 app = Flask(__name__)
